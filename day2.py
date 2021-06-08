@@ -1,6 +1,71 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Created on Mon Jun  7 23:04:16 2021
+
+@author: carlos
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+#%% 
+""" Sample geometric distribution """
+
+def geom_dist(p, U_size=100000):
+	U = np.random.uniform(size=U_size)
+	X = np.log(U)/np.log(1-p)+1
+	return X
+
+p = 0.2
+X = geom_dist(p)
+
+plt.hist(X,100)
+plt.title(r"Geometric distribution")
+
+#%%
+""" Discrete crude method """
+
+pi = np.array([7/48, 5/48, 1/8, 1/16, 1/4, 5/16]) # Define 6 point distribution
+
+def crude(pi, U_size=100000):
+	pi_cumsum = np.cumsum(pi)
+	U = np.random.uniform(size=U_size)
+	X = np.zeros(U_size)
+	for i in range(len(pi)-1):
+		index = np.where((U>pi_cumsum[i]) & (U<=pi_cumsum[i+1]))
+		X[index] = i+1
+	return X
+
+X = crude(pi)
+plt.hist(X,len(pi))
+plt.title(r"Discrete crude method")
+		
+#%% 
+
+""" Rejection method """
+
+pi = np.array([7/48, 5/48, 1/8, 1/16, 1/4, 5/16]) # Define 6 point distribution
+
+def rejection(pi, U_size=100000):
+	c = len(pi) # Can be any value >= len(pi)
+	U1 = np.random.uniform(size=U_size)
+	U2 = np.random.uniform(size=U_size)
+	
+	## Condition
+	index = np.where()
+	
+	
+	
+#%% 
+
+###################
+##### PART 2 ######
+###################
+
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
 Created on Mon Jun  7 10:25:05 2021
 
 @author: carlos
