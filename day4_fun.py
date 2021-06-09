@@ -10,6 +10,9 @@ from numpy.random import *
 import matplotlib.pyplot as plt
 from scipy import stats
 
+
+### Main 1
+
 def exp_crudeMC(a,b,n_uni=100, n_iter=10000):
 	""" Crude Monte-Carlo estimator """
 	value_array = np.zeros(n_iter)
@@ -69,3 +72,44 @@ def exp_stratified(a,b,n_uni=1000, n_iter=10):
 	value_mean = np.mean(Wi) 
 	value_std = np.std(Wi)
 	return value_mean, value_std, Wi
+
+
+#### Main 2
+
+def cvar(X,Y):
+	cov = np.cov(X,Y)
+	meanY = np.mean(Y)
+	c = -cov[0,1]/cov[1,1]
+	
+	value_array = X+c*(Y-meanY)
+	
+	# Statistics over all the iterations to give the most precise value
+	value_mean = np.mean(value_array) 
+	value_std = np.std(value_array)
+	return value_mean, value_std, value_array
+
+def exp_importance(a,b,lamb,n_uni=1000):
+	""" Importance sampling estimator """
+	X = uniform(a,b,size=n_uni)
+	Y = 1-X
+	gY = lamb*np.exp(-lamb*Y)
+	hYfY = np.exp(Y)*X
+	
+	value_array = hYfY/gY
+	value_mean = np.mean(value_array)
+	value_std = np.std(value_array)
+	return value_mean, value_std, value_array
+
+
+def normal_crudeMC(a,n_uni=10000, n_iter=10000):
+	""" Crude Monte-Carlo estimator for X>a"""
+	value_array = np.zeros(n_iter)
+	for i in range(n_iter):
+		N = normal(0,1,size=n_uni)
+		value = np.sum(N>a)/n_uni
+		value_array[i] = value
+	
+	# Statistics over all the iterations to give the most precise value
+	value_mean = np.mean(value_array) 
+	value_std = np.std(value_array)
+	return value_mean, value_std, value_array

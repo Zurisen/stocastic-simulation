@@ -12,7 +12,7 @@ from scipy import stats
 from time import time
 from numpy.random import *
 
-def hyperexp(p1,p2,l1,l2, size):
+def hyperexp(p1,p2,l1,l2,size):
 	""" Hyperexponential distribution"""
 	
 	u = random_sample(size)
@@ -89,4 +89,9 @@ def queue_simulation_merged(n_su, mst, mtbc, n_customers, arrival_dist_type, ser
 			service_unit_times[index] = service_time_dist[i] + time[i] # Adds the service unit time to the time the customer has arrived
 		else:
 			blocked_customers += 1
-	return blocked_customers
+			
+	### Generate control values: for example the means of the arrival and service sampled distributions
+	mean_arrival = np.mean(arrival_time_dist)
+	mean_service = np.mean(service_time_dist)	
+	
+	return blocked_customers, mean_arrival, mean_service

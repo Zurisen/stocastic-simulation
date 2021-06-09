@@ -44,6 +44,7 @@ plt.axvline(x=ci[1], color="black", alpha=0.8,linestyle="--")
 
 #%%
 """ Antithetic variables estimator """
+
 a = 0 # Beginning of the interval
 b = 1 # End of the interval
 
@@ -76,6 +77,7 @@ plt.axvline(x=ci[1], color="black", alpha=0.8,linestyle="--")
 
 #%%
 """ Control variable estimator """
+
 a = 0 # Beginning of the interval
 b = 1 # End of the interval
 
@@ -97,12 +99,13 @@ print( " Relerror(%%)\t%1.4f\t" %relerror_mean, "%1.4f\n" %relerror_var)
 
 ci = stats.norm.interval(0.95, loc=value_mean, scale=value_std) # 95% confidence intervals
 plt.hist(value_array,50)
-plt.title(r"Antithetic variables $\int_0^1 e^x$ estimation")
+plt.title(r"Control variable $\int_0^1 e^x$ estimation")
 plt.axvline(x=ci[0], color="black", alpha=0.8,linestyle="--")
 plt.axvline(x=ci[1], color="black", alpha=0.8,linestyle="--")
 
 #%%
 """ Stratified sampling estimator """
+
 a = 0 # Beginning of the interval
 b = 1 # End of the interval
 
@@ -112,6 +115,6 @@ print("  \t\t\tMean\t\t Var\n", "==============================")
 print( " Computed\t%1.4f\t" %value_mean, "%1.8f\n" %np.power(value_std,2))
 ci = stats.norm.interval(0.95, loc=value_mean, scale=value_std) # 95% confidence intervals
 plt.hist(value_array,50)
-plt.title(r"Antithetic variables $\int_0^1 e^x$ estimation")
+plt.title(r"Stratified sampling $\int_0^1 e^x$ estimation")
 plt.axvline(x=ci[0], color="black", alpha=0.8,linestyle="--")
 plt.axvline(x=ci[1], color="black", alpha=0.8,linestyle="--")
