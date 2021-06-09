@@ -12,12 +12,10 @@ from scipy import stats
 from time import time
 from numpy.random import *
 
-#%%
-### All merged ###
-def hyperexp(p1,p2,l1,l2):
+def hyperexp(p1,p2,l1,l2, size):
 	""" Hyperexponential distribution"""
 	
-	u = random_sample(n_customers)
+	u = random_sample(size)
 	index_1 = np.where(u<p1)
 	index_2 = np.where(u>=p1)
 
@@ -61,7 +59,7 @@ def queue_simulation_merged(n_su, mst, mtbc, n_customers, arrival_dist_type, ser
 	arrival_dist_list = {
 						"poisson": poisson(size=[n_customers], lam=mtbc), ## Poisson dist
 						"erlang": gamma(shape=1,size=[n_customers], scale=mtbc), ## Erlang dist
-						"hyperexp": hyperexp(0.8,0.2,0.8333,5) ## hyperexp
+						"hyperexp": hyperexp(0.8,0.2,0.8333,5, size=n_customers) ## hyperexp
 						}
 
 
@@ -92,38 +90,3 @@ def queue_simulation_merged(n_su, mst, mtbc, n_customers, arrival_dist_type, ser
 		else:
 			blocked_customers += 1
 	return blocked_customers
-
-n_service_units = 10
-mean_service_time = 8
-mean_time_between_customers = 1
-n_customers = 10000
-arrival_dist_type = "hyperexp"
-service_dist_type = "pareto"
-
-# Commented code to check for individual runs
-blocked_customers = queue_simulation_merged(n_service_units, mean_service_time, mean_time_between_customers, \
-											   n_customers, arrival_dist_type, service_dist_type)
-print(blocked_customers)
-
-
-#%%
-n_service_units = 10
-mean_service_time = 8
-mean_time_between_customers = 1
-n_customers = 10000
-arrival_dist_type = "hyperexp"
-service_dist_type = "exp"
-
-
-n_iters = 100
-blocked_customers_array = np.zeros(n_iters)
-for j in range(n_iters): 
-	blocked_customers = queue_simulation_merged(n_service_units, mean_service_time, mean_time_between_customers, n_customers, "hyperexp", "exp")
-	blocked_customers_array[j] = blocked_customers
-blocked_customers_array=blocked_customers_array/(n_customers) # Percentage of rejected customers (per simulation)
-
-ci = stats.norm.interval(0.95, loc=np.mean(blocked_customers_array), scale=np.std(blocked_customers_array)) # 95% confidence intervals
-plt.hist(blocked_customers_array,50)
-plt.title(r"Blocked customers dist")
-plt.axvline(x=ci[0], color="black", alpha=0.8,linestyle="--")
-plt.axvline(x=ci[1], color="black", alpha=0.8,linestyle="--")
