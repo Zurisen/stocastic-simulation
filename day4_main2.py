@@ -48,7 +48,7 @@ plt.axvline(x=ci[1], color="black", alpha=0.8,linestyle="--")
 
 a = 0 # Beginning of the interval
 b = 1 # End of the interval
-lamb_array = np.linspace(0.4,0.6,10000)
+lamb_array = np.linspace(1,10,10000)
 exact_value = np.exp(1)-1
 
 error = 300
@@ -80,7 +80,7 @@ plt.axvline(x=ci[1], color="black", alpha=0.8,linestyle="--")
 a = 1
 value_mean, value_std, value_array = normal_crudeMC(a)
 print("  \t\t\tMean\t\t Var\n", "==============================")
-print( " Computed\t%1.4f\t" %value_mean, "%1.8f\n" %np.power(value_std,2))
+print( " Computed\t%1.8f\t" %value_mean, "%1.12f\n" %np.power(value_std,2))
 
 # Plot sampled values
 N = normal(0,1,size=3000)
@@ -104,6 +104,19 @@ plt.hist(value_array,50, color="blue")
 plt.title(r"Crude MC X>"+str(a)+" estimation")
 plt.axvline(x=ci[0], color="black", alpha=0.8,linestyle="--")
 plt.axvline(x=ci[1], color="black", alpha=0.8,linestyle="--")
+#%%
+a = 1
+## Using Importance sampling
 
+value_mean, value_std, value_array = normal_importance(a, sigma=1)
+print("  \t\t\tMean\t\t Var\n", "==============================")
+print( " Computed\t%1.8f\t" %value_mean, "%1.12f\n" %np.power(value_std,2))
 
+# Plot distribution
+ci = stats.norm.interval(0.95, loc=value_mean, scale=value_std) # 95% confidence intervals
+
+plt.hist(value_array,50, color="blue")
+plt.title(r"Importance sampling X>"+str(a)+" estimation")
+plt.axvline(x=ci[0], color="black", alpha=0.8,linestyle="--")
+plt.axvline(x=ci[1], color="black", alpha=0.8,linestyle="--")
 

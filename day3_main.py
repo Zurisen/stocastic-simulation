@@ -20,7 +20,7 @@ mean_service_time = 8
 mean_time_between_customers = 1
 n_customers = 10000
 arrival_dist_type = "poisson"
-service_dist_type = "pareto"
+service_dist_type = "exp"
 
 # Commented code to check for individual runs
 blocked_customers,_,_ = queue_simulation_merged(n_service_units, mean_service_time, mean_time_between_customers, \

@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from scipy import stats
 
 
-### Main 1
+#### Main 1
 
 def exp_crudeMC(a,b,n_uni=100, n_iter=10000):
 	""" Crude Monte-Carlo estimator """
@@ -91,25 +91,48 @@ def cvar(X,Y):
 def exp_importance(a,b,lamb,n_uni=1000):
 	""" Importance sampling estimator """
 	X = uniform(a,b,size=n_uni)
-	Y = 1-X
+	Y = lamb*np.exp(-lamb*X)
+
+	fY = Y
+	fY[(Y>1)] = 0
+	hY = np.exp(Y)
 	gY = lamb*np.exp(-lamb*Y)
-	hYfY = np.exp(Y)*X
 	
-	value_array = hYfY/gY
+	
+	value_array = hY*fY/gY
 	value_mean = np.mean(value_array)
 	value_std = np.std(value_array)
 	return value_mean, value_std, value_array
 
 
-def normal_crudeMC(a,n_uni=10000, n_iter=10000):
+def normal_crudeMC(a,mean=0,std=1,n_uni=10000, n_iter=1000):
 	""" Crude Monte-Carlo estimator for X>a"""
 	value_array = np.zeros(n_iter)
 	for i in range(n_iter):
-		N = normal(0,1,size=n_uni)
-		value = np.sum(N>a)/n_uni
+		N = normal(mean,std,size=n_uni)
+		value = sum(N>a)/n_uni
 		value_array[i] = value
 	
 	# Statistics over all the iterations to give the most precise value
 	value_mean = np.mean(value_array) 
+	value_std = np.std(value_array)
+	return value_mean, value_std, value_array
+
+def normal_importance(a, sigma=1, n_uni=10000, n_iter=1000):
+	""" Importance sampling for normal distribution """
+	X = np.zeros(n_iter)
+	fY = np.zeros(n_iter)
+	for i in range(n_iter):
+		N = normal(0,1,size=n_uni)
+		X[i] = sum(N>a)/n_uni		
+
+	Y = np.exp( -0.5*np.power(X-a,2)/np.power(sigma,2) )/np.sqrt(2*3.1416)/sigma
+	fY = X
+	
+	hYfY_gY = fY*sigma*np.exp(-0.5*np.power(Y,2) +0.5*np.power(Y-a,2)/np.power(sigma,2) )
+	#hYfY_gY = X*Y / ( np.exp( -0.5*np.power(Y-a,2)/np.power(sigma,2) )/np.sqrt(2*3.1416)/sigma )
+	
+	value_array = hYfY_gY
+	value_mean = np.mean(value_array)
 	value_std = np.std(value_array)
 	return value_mean, value_std, value_array
