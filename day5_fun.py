@@ -9,7 +9,8 @@ import numpy as np
 from numpy.random import *
 import matplotlib.pyplot as plt
 from scipy import stats
-from math import factorial
+#from math import factorial
+from scipy.special import factorial
 
 def metropolis_hastings(A,m,n=10000):
 	""" Truncated Poisson - Metropolis hastings"""
@@ -92,15 +93,14 @@ def gibbs_sampling(A1,A2,m,n=10000):
 	J = np.zeros(n)
 	I[0] = randint(0,m)
 	J[0] = randint(0,m-I[0])
+	indx = np.arange(0,m,1)
+	cteterm =np.sum( np.power(A1,indx)/factorial(indx) )
+	print(cteterm)
 	for t in range(n-1):
-		cond1 = np.power(A2,J[t])/factorial(J[t])
-		cond2 = np.power(A1,I[t])/factorial(I[t])
-		
-		if cond1 >= cond2:
-			I[t+1] = randint(0,m)
-			J[t+1] = randint(0,m-I[t+1])
+		if (t%2) == 0:
+			I[t+1] = np.power(A1,I[t])/factorial(I[t])*cteterm
+			print(np.power(A1,I[t])/factorial(I[t]))
+					
 		else:
-			J[t+1] = randint(0,m)
-			I[t+1] = randint(0,m-J[t+1])
-	
+			J[t+1] = np.power(A2,J[t])/factorial(J[t])*cteterm
 	return I,J
