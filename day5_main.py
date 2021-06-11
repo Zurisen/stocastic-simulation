@@ -16,6 +16,7 @@ A = 8 ## Arrival intensity * mean service time
 m = 10 ## Number of services
 X = metropolis_hastings(A,m)
 
+plt.figure()
 plt.hist(X,10)
 plt.title("Truncated Poisson - Metropolis hastings")
 #%%
@@ -43,7 +44,7 @@ plt.hist(J,10, alpha=0.7, label=r"$j$ - Coordinate wise")
 plt.title("Truncated Poisson - Mixed Metropolis hastings coordinate wise")
 
 plt.legend()
-
+#%%
 """ Truncated Poisson - Gibbs sampling"""
 A1 = 4
 A2 = 4
@@ -53,6 +54,10 @@ I,J = gibbs_sampling(A1,A2,m)
 plt.figure(2)
 plt.hist(I,10, alpha=0.7, label=r"$i$ - Gibbs sampling")
 plt.hist(J,10, alpha=0.7, label=r"$j$ - Gibbs sampling")
+
 plt.title("Truncated Poisson - Gibbs sampling")
 
 plt.legend()
+
+#%% 
+""" Bayesian statistical problem """

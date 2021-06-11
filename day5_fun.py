@@ -94,13 +94,16 @@ def gibbs_sampling(A1,A2,m,n=10000):
 	I[0] = randint(0,m)
 	J[0] = randint(0,m-I[0])
 	indx = np.arange(0,m,1)
-	cteterm =np.sum( np.power(A1,indx)/factorial(indx) )
-	print(cteterm)
+	#cteterm = np.sum( np.power(A1,indx)/factorial(indx) )
+	K = np.max(np.power(A1,indx)/factorial(indx))
 	for t in range(n-1):
-		if (t%2) == 0:
-			I[t+1] = np.power(A1,I[t])/factorial(I[t])*cteterm
-			print(np.power(A1,I[t])/factorial(I[t]))
-					
+		cond1 = np.power(A1,I[t])/factorial(I[t])/K
+		u = uniform(0,1)
+		if u<cond1:
+			I[t+1] = randint(0,m)
+			J[t+1] = randint(0,m-I[t+1])
 		else:
-			J[t+1] = np.power(A2,J[t])/factorial(J[t])*cteterm
+			J[t+1] = randint(0,m)
+			I[t+1] = randint(0,m-J[t+1])		
+			
 	return I,J
