@@ -82,9 +82,47 @@ def min_cost_overall(M_cost, a, b, n_iters=10000):
 	return best_total_cost_array, best_route, T
 			
 		
-		
+def ex13(a,b,X, n_bootstraps = 500, len_bootstraps= 100):
+	Xmean = np.mean(X)
+	Xvar = np.var(X)
+
+	boot = np.zeros((n_bootstraps,len_bootstraps))
+	boot_value = np.zeros(n_bootstraps)
+	for i in range(n_bootstraps):
+		boot[i] = choice(X,len_bootstraps, replace=True)
+		boot_value[i] = Xmean- np.mean(boot[i])
 	
+	boot_means = np.mean(boot,axis=1)
+	boot_vars = np.var(boot,axis=1)
+	
+	
+	P = 1-np.sum(boot_value>b)+np.sum(boot_value<a)
+	
+	return P, boot_value, Xmean, Xvar, boot_means, boot_vars
+	
+def pareto_boot(len_bootstraps=500, n_bootstraps=1000,N= 200,beta=1, k=1.05):
+	
+	distr = beta*pareto(1.05, size=N)
+	boot = np.zeros((n_bootstraps,len_bootstraps))	
+	for i in range(n_bootstraps):
+		boot[i] = choice(distr, len_bootstraps, replace=True)
+	boot_means = np.mean(boot, axis=1)
+	boot_vars = np.var(boot, axis=1)
+	boot_medians = np.median(boot, axis=1)
+	
+	return boot_means, boot_vars, boot_medians
+
+def vector_boot(boot_means,len_bootstraps=500, n_bootstraps=1000):
+	
+	boot = np.zeros((n_bootstraps,len_bootstraps))	
+	for i in range(n_bootstraps):
+		boot[i] = choice(boot_means, len_bootstraps, replace=True)
+	boot_means = np.mean(boot, axis=1)
+	boot_vars = np.var(boot, axis=1)
+	boot_medians = np.median(boot, axis=1)
+	
+	return boot_means, boot_vars, boot_medians
 		
-		
+
 	
 	
