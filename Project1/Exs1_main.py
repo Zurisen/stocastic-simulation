@@ -10,8 +10,8 @@ from numpy.random import *
 import matplotlib.pyplot as plt
 from scipy import stats
 from random import sample
-from Exs_fun import *
-#%% 
+from Exs1_fun import *
+#%%
 ######################
 ##### EXERCISE 1 #####
 ######################
@@ -81,7 +81,7 @@ plt.axvline(x=ci_an[1], color="black", alpha=0.8,linestyle="--")
 plt.xlabel("Month of death")
 plt.ylabel("Number of women")
 
-#%% 
+#%%
 ######################
 ##### EXERCISE 2 #####
 ######################
