@@ -49,16 +49,58 @@ print("Number of women with distant cancer at month 30.5: %d" %distant_cancer,"o
 #%% 
 """ Analytical distribution Exercise 7 """
 CDF_emp, _, _= plt.hist(women_months, 100, density=True, histtype='step',
-                           cumulative=True, label='Empirical')
+                           cumulative=True, label='CDF Empirical')
 t_an = np.linspace(0,max(women_months), 100)
 CDF_an = np.zeros(len(t_an))
 ## Now generate CDF of lifetime (month of death) from the analytical result 
 Qs = Q[:-1,:-1]
 
 for i in range(len(t_an)):
-    CDF_an[i] = 1- np.matmul( np.array([0,1,0,0]).T,np.matmul( expm(Qs*t_an[i]), np.ones(Qs.shape[1]) ) )
+    CDF_an[i] = 1- np.matmul( np.array([1,0,0,0]).T,np.matmul( expm(Qs*t_an[i]), np.ones(Qs.shape[1]) ) )
     
 plt.plot(t_an,CDF_an, label="CDF analytical")
 plt.xlim((0,t_an[-1]))
 
+
+#%%
+######################
+##### EXERCISE 8 #####
+######################
+
+## Kolmogorov test
 ks = stats.kstest(CDF_emp,CDF_an)
+
+#%%
+######################
+##### EXERCISE 9 #####
+######################
+
+Q = np.array([[-0.00475, 0.0025, 0.00125, 0, 0.001],
+              [0,-0.007,0,0.002,0.005],
+              [0,0,-0.008,0.003,0.005],
+              [0,0,0,-0.009,0.009],
+              [0,0,0,0,0]])
+n_women = 1000
+
+last_states, women_months = simulate_death_2(Q, n_women, limit_months=30.5)
+CDF_emp, bins, _= plt.hist(women_months, 100, density=True, histtype='step',
+                           cumulative=True, label='Empirical')
+
+t_an = np.linspace(0,max(women_months), 100)
+
+## Kaplan-Meier estimator empirical
+S_emp = (n_women-CDF_emp)/n_women
+
+Qs = Q[:-1,:-1]
+
+for i in range(len(t_an)):
+    CDF_an[i] = 1- np.matmul( np.array([1,0,0,0]).T,np.matmul( expm(Qs*t_an[i]), np.ones(Qs.shape[1]) ) )
+    
+## Kaplan-Meier estimator analytical
+S_an = (n_women-CDF_an)/n_women
+    
+plt.figure()
+plt.plot(t_an,S_emp, label="Empirical alive women")
+plt.plot(t_an,S_an, label="Analytical alive women")
+plt.title("Kaplan-Meier estimator")
+plt.legend()
