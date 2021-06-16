@@ -43,24 +43,26 @@ print("Mean month of death: %1.2f" %mean_month)
 print("Std month of death: %1.4f" %std_month)
 
 ## Count proportion of women standing in states 3 or 4 (distant cancer reappear) int the month 30.5
-distant_cancer = np.sum(np.isin(last_states,[2,3])) 
+distant_cancer = np.sum(np.isin(last_states,[2,3]))
 print("Number of women with distant cancer at month 30.5: %d" %distant_cancer,"out of %d" %n_women ,"(%1.2f%%)" %(distant_cancer/n_women*100))
 
-#%% 
+#%%
 """ Analytical distribution Exercise 7 """
 CDF_emp, _, _= plt.hist(women_months, 100, density=True, histtype='step',
                            cumulative=True, label='CDF Empirical')
 t_an = np.linspace(0,max(women_months), 100)
 CDF_an = np.zeros(len(t_an))
-## Now generate CDF of lifetime (month of death) from the analytical result 
+## Now generate CDF of lifetime (month of death) from the analytical result
 Qs = Q[:-1,:-1]
 
 for i in range(len(t_an)):
     CDF_an[i] = 1- np.matmul( np.array([1,0,0,0]).T,np.matmul( expm(Qs*t_an[i]), np.ones(Qs.shape[1]) ) )
-    
+
 plt.plot(t_an,CDF_an, label="CDF analytical")
 plt.xlim((0,t_an[-1]))
 
+## Kaplan-Meier estimator empirical
+S_emp_1 = (n_women-CDF_emp)/n_women
 
 #%%
 ######################
@@ -89,18 +91,25 @@ CDF_emp, bins, _= plt.hist(women_months, 100, density=True, histtype='step',
 t_an = np.linspace(0,max(women_months), 100)
 
 ## Kaplan-Meier estimator empirical
-S_emp = (n_women-CDF_emp)/n_women
+S_emp_2 = (n_women-CDF_emp)/n_women
 
 Qs = Q[:-1,:-1]
 
 for i in range(len(t_an)):
     CDF_an[i] = 1- np.matmul( np.array([1,0,0,0]).T,np.matmul( expm(Qs*t_an[i]), np.ones(Qs.shape[1]) ) )
-    
+
 ## Kaplan-Meier estimator analytical
 S_an = (n_women-CDF_an)/n_women
-    
+
 plt.figure()
-plt.plot(t_an,S_emp, label="Empirical alive women")
-plt.plot(t_an,S_an, label="Analytical alive women")
+plt.plot(t_an,S_emp_2, label="Empirical alive women with treatment")
+plt.plot(t_an,S_an, label="Analytical alive women with treatment")
+plt.title("Kaplan-Meier estimator")
+plt.legend()
+
+#%% Compare Kaplan-Meier estimator empirical without treatment and empirical with treatment
+plt.figure()
+plt.plot(t_an,S_emp_2, label="Empirical alive women without treatment")
+plt.plot(t_an,S_an, label="Empirical alive women with treatment")
 plt.title("Kaplan-Meier estimator")
 plt.legend()
