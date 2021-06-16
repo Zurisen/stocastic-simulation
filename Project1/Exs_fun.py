@@ -70,6 +70,66 @@ def empirical_lifetime(P, t):
     Mean = np.matmul(np.matmul(pi, np.linalg.inv(np.identity(len(pi))-Ps)), np.ones(len(pi)) )
     
     return Prob, Mean
+
+def rejection_sampling(P, women_states_array, women_months, n_accepted=1000):
+    ## Initialize accepted women
+    accepted_women_states_array = np.full((n_accepted, women_states_array.shape[1]), fill_value=np.nan)
+    accepted_women_months = np.zeros(n_accepted)
+    ## Create classes (state of the women) probabilities for rejection sampling
+    n_classes = P.shape[0]
+    class_prob_distribution = np.zeros(n_classes)
+    for n in range(n_classes):    
+        class_prob_distribution[n] = np.sum(women_states_array[:,11]==n)/women_states_array.shape[0]
+    
+    women = 0
+    accepted = 0
+    rejected = 0
+    
+    ## Reject Nans at month 12
+    wherenot_Nans = np.where(~np.isnan(women_states_array[:,11]))
+    rejected += women_states_array.shape[0]-len(wherenot_Nans[0])
+    women_states_array = women_states_array[wherenot_Nans[0]]
+    
+    while (accepted < n_accepted):
+        women_state_12 = int(women_states_array[women,11])
+        u = uniform(0,1)
+        
+        if (women_states_array[women,11] not in [0,4]) & (class_prob_distribution[women_state_12]<u):
+            accepted_women_states_array[accepted] = women_states_array[women]
+            accepted_women_months[accepted] = women_months[women]
+            accepted += 1
+        else:
+            rejected +=1
+
+        women += 1
+        #print(accepted)
+        if women == women_states_array.shape[0]:
+            print("Accepted %d" %accepted, "out of %d expected" %n_accepted )
+            raise AssertionError("Not enough accepted women, input more samples!")
+        
+    
+        
+    return accepted_women_states_array, accepted_women_months
     
     
+def control_variate(P, n_women, n_iter, limit_months, method="standard"):
+    X = np.zeros(n_iter) ## We will store here the fraction of dead women per simulation
+    Y = np.zeros(n_iter) ## We will store here the mean lifetime after surgery per simulation
+    for i in range(n_iter):
+        if method=="standard":
+            women_states_array, women_months = simulate_death_1(P, n_women, limit_months)
+        elif method=="analytical":
+            women_states_array, women_months = simulate_death_1_analytical(P, n_women, limit_months)
+        else:
+            raise NotImplementedError("Wrong method: Choose standard or analytical method")
+        X[i] = np.sum(np.isnan(women_states_array[:,-1]))/n_women
+        Y[i] = np.mean(women_months)
+    
+    cov = np.cov(X,Y)
+    meanY = np.mean(Y)
+    c = -cov[0,1]/cov[1,1]
+
+    Z = X + c*(Y-meanY)
+    
+    return X, Z
     
