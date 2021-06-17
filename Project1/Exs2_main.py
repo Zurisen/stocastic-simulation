@@ -58,8 +58,9 @@ Qs = Q[:-1,:-1]
 for i in range(len(t_an)):
     CDF_an[i] = 1- np.matmul( np.array([1,0,0,0]).T,np.matmul( expm(Qs*t_an[i]), np.ones(Qs.shape[1]) ) )
 
-plt.plot(t_an,CDF_an, label="CDF analytical")
+plt.plot(t_an,CDF_an, label="CDF Analytical")
 plt.xlim((0,t_an[-1]))
+plt.legend()
 
 ## Kaplan-Meier estimator empirical
 S_emp_1 = (n_women-CDF_emp)/n_women
