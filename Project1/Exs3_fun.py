@@ -50,12 +50,13 @@ def simulate_death_3(Q, n_women, doctor_visit=48, limit_months=1200):
                 visit = same_state_visits[-1]+1 ## Counter to track the number of total visits of the patient to the doctor
                 #print("State visit: ", state)
                 doctor_register[women,same_state_visits] = state ## Register the patient's state in the doctor visits
+                last_states[women] = state ## Save previous state value
             if (new_state==4) & (visit<maximum_visits):
                 doctor_register[women,visit] = new_state ## Append death as last visit to the doctor (to be shown in plot)
-                
+                last_states[women] = new_state 
             state = new_state # Update state 
             
-            last_states[women] = state ## Save previous state value
+            
         women_months[women] = month
         
     return doctor_register, last_states, women_months
@@ -131,15 +132,14 @@ def converge_Q(Q, n_women, doctor_visit=48, limit_months=1200):
     tol = 1e-3
     condition = 100
     
-    n_iters = 0
+    n_iters = 1
     while condition > tol:
         n_iters += 1
         
         Qk = Qk_
-        N, S = simulate_death_3_task13(Qk, n_women, doctor_visit=48, limit_months=1200)
+        N, S = simulate_death_3_task13(Qk, n_women, doctor_visit=doctor_visit, limit_months=limit_months)
         Qk_ = update_Q(N,S)
-        condition = np.max( np.abs(Qk[:-1] - Qk_[:-1]) ) ## Maximum norm of Qk-Qk_
-        print(Qk_)
+        condition = np.max( np.abs(Qk - Qk_) ) ## Maximum norm of Qk-Qk_
     
     return Qk_, n_iters
 

@@ -36,6 +36,7 @@ plt.plot(alive,label="Alive women")
 plt.xlabel("Month")
 plt.ylabel("Number of women")
 plt.legend()
+plt.savefig("deadvsalive_empirical.svg", format="svg")
 
 plt.figure()
 ci = stats.norm.interval(0.95, loc=mean_month, scale=std_month) # 95% confidence intervals
@@ -47,6 +48,7 @@ plt.axvline(x=ci[0], color="black", alpha=0.8,linestyle="--")
 plt.axvline(x=ci[1], color="black", alpha=0.8,linestyle="--")
 plt.xlabel("Month of death")
 plt.ylabel("Number of women")
+plt.savefig("monthofdead_dist_empirical.svg", format="svg")
 
 """ Find in how many women cancer reappears locally """
 count_local = np.sum(np.sum(women_states==1,axis=1)!=0)
@@ -69,7 +71,9 @@ plt.plot(alive_an,label="Alive women")
 plt.xlabel("Month")
 plt.ylabel("Number of women")
 plt.legend()
-n_women
+plt.savefig("deadvsalive_analytical.svg", format="svg")
+
+
 plt.figure()
 ci_an = stats.norm.interval(0.95, loc=mean_month_an, scale=std_month_an) # 95% confidence intervals
 
@@ -80,6 +84,8 @@ plt.axvline(x=ci_an[0], color="black", alpha=0.8,linestyle="--")
 plt.axvline(x=ci_an[1], color="black", alpha=0.8,linestyle="--")
 plt.xlabel("Month of death")
 plt.ylabel("Number of women")
+plt.savefig("monthofdead_dist_analytical.svg", format="svg")
+
 
 #%%
 ######################
@@ -96,6 +102,11 @@ a = plt.hist(women_states_120,bins=5)
 plt.bar([0,1,2,3,4],a[0])
 plt.ylabel("Number of women")
 plt.xlabel("State of women at month 120")
+plt.title("Distributions of states at t=120")
+
+plt.savefig("distrofstates_120.svg", format="svg")
+
+
 #%%
 """ Check Mean and Probability of healthy women at time t """
 
@@ -106,28 +117,23 @@ for t in range(t_total):
     Probt, Meant = empirical_lifetime(P, t=t)
     Probs[t] = Probt
 
-plt.figure()
-plt.plot(Probs)
-plt.title("Probability of a woman to die at different points in time (Probability distr. function)")
-plt.xlabel("Month")
-plt.ylabel("Probability")
-
-plt.figure()
 plt.plot(np.cumsum(Probs))
-plt.title("Probability of a woman to be dead at different points in time (Cumulative distr. function)")
+plt.title("Probability of a woman to be dead at different points in time (CDF)")
 plt.xlabel("Month")
 plt.ylabel("Probability")
+plt.savefig("WomantobedeadCDF_exact.svg", format="svg")
 
 #%%
 ######################
 ##### EXERCISE 4 #####
 ######################
 
-women_states, women_months = simulate_death_1_analytical(P,n_women=5000)
+women_states, women_months = simulate_death_1(P,n_women=20000)
 #%%
 n_accepted = 1000
 accepted_women_states, accepted_women_months = rejection_sampling(P, women_states, women_months, n_accepted=n_accepted)
 
+accepted_women_months = accepted_women_months[accepted_women_months!=(np.max(accepted_women_months))]
 mean_month = np.mean(accepted_women_months)
 std_month = np.std(accepted_women_months)
 ## Number of alive and dead women per month
@@ -140,6 +146,8 @@ plt.plot(alive,label="Alive women")
 plt.xlabel("Month")
 plt.ylabel("Number of women")
 plt.legend()
+plt.savefig("deadvsalive_empirical_rejection.svg", format="svg")
+
 
 plt.figure()
 ci = stats.norm.interval(0.95, loc=mean_month, scale=std_month) # 95% confidence intervals
@@ -151,6 +159,8 @@ plt.axvline(x=ci[0], color="black", alpha=0.8,linestyle="--")
 plt.axvline(x=ci[1], color="black", alpha=0.8,linestyle="--")
 plt.xlabel("Month of death")
 plt.ylabel("Number of women")
+plt.savefig("monthofdead_dist_empirical_rejection.svg", format="svg")
+
 
 #%%
 ######################
@@ -176,9 +186,11 @@ plt.axvline(x=ci_Z[1], color="orange", alpha=0.8,linestyle="--")
 
 plt.xlabel("Fraction of women dying within the first 350 months")
 plt.legend()
+plt.savefig("control_variate.svg", format="svg")
 
 var_X = np.var(X)
 var_Z = np.var(Z)
 print("There is a reduction of variance of %1.6f -->" %var_X,"%1.6f" %var_Z, "/%1.2f%%)" %(var_Z/var_X*100))
+
 
 

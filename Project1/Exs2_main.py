@@ -38,9 +38,11 @@ plt.axvline(x=ci[0], color="black", alpha=0.8,linestyle="--")
 plt.axvline(x=ci[1], color="black", alpha=0.8,linestyle="--")
 plt.xlabel("Month of death")
 plt.ylabel("Number of women")
+plt.savefig("monthofdead_ex7_empirical.svg", format="svg")
 
 print("Mean month of death: %1.2f" %mean_month)
 print("Std month of death: %1.4f" %std_month)
+
 
 ## Count proportion of women standing in states 3 or 4 (distant cancer reappear) int the month 30.5
 distant_cancer = np.sum(np.isin(last_states,[2,3]))
@@ -60,7 +62,11 @@ for i in range(len(t_an)):
 
 plt.plot(t_an,CDF_an, label="CDF Analytical")
 plt.xlim((0,t_an[-1]))
+plt.xlabel("Proportion of women dead")
+plt.ylabel("Month")
 plt.legend()
+
+plt.savefig("CDFcomparison_ex7.svg", format="svg")
 
 ## Kaplan-Meier estimator empirical
 S_emp_1 = (n_women-CDF_emp)/n_women
@@ -107,10 +113,13 @@ plt.plot(t_an,S_emp_2, label="Empirical alive women with treatment")
 plt.plot(t_an,S_an, label="Analytical alive women with treatment")
 plt.title("Kaplan-Meier estimator")
 plt.legend()
+plt.savefig("KM_analcsemp.svg", format="svg")
+
 
 #%% Compare Kaplan-Meier estimator empirical without treatment and empirical with treatment
 plt.figure()
-plt.plot(t_an,S_emp_2, label="Empirical alive women without treatment")
-plt.plot(t_an,S_an, label="Empirical alive women with treatment")
+plt.plot(t_an,S_emp_1, label="Empirical alive women without treatment")
+plt.plot(t_an,S_emp_2, label="Empirical alive women with treatment")
 plt.title("Kaplan-Meier estimator")
 plt.legend()
+plt.savefig("KM_withandwithouttreatment.svg", format="svg")

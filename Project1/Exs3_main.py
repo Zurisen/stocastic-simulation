@@ -26,7 +26,7 @@ Q = np.array([[-0.00475, 0.0025, 0.00125, 0, 0.001],
 n_women = 1000
 doctor_visit = 48
 
-doctor_register, last_states, women_months = simulate_death_3(Q, n_women, doctor_visit=doctor_visit, limit_months=1200)
+doctor_register, last_states, women_months = simulate_death_3(Q, n_women, doctor_visit=doctor_visit, limit_months=48*12)
 
 ## Check the doctor visit time series of 8 random patients
 n_time_series = 50
@@ -51,6 +51,15 @@ plt.axhspan(2.5,3.5,alpha=0.3,color="red")
 plt.axhspan(3.5,4.5,alpha=0.5,color="red")  
 plt.title("Evolution of women in every doctor visit")  
 plt.ylim(-0.5,4.5)
+plt.savefig("doctorvisit_evolution.svg", format="svg")
+
+print("Dead women: %d" %np.sum(last_states==4))
+print("Local+metastasis women: %d" %np.sum(last_states==3))
+print("Metastasis women: %d" %np.sum(last_states==2))
+print("Local women: %d" %np.sum(last_states==1))
+print("Healthy women: %d" %np.sum(last_states==0))
+
+
 
 #%%
 Q = np.array([[-0.00475, 0.0025, 0.00125, 0, 0.001],
@@ -63,7 +72,10 @@ doctor_visit = 48
 
 ## We create a simulation nowing Q to get some empirical values, then get the N and S of that
 ## (supposely given) to run the following simulations
-N, S = simulate_death_3_task13(Q, n_women, doctor_visit=48, limit_months=1200)
+N, S = simulate_death_3_task13(Q, n_women, doctor_visit=48, limit_months=48*12)
 Q0 = update_Q(N, S)
 
 Qk_, n_iters = converge_Q(Q0, n_women, doctor_visit=48, limit_months=1200)
+
+print(Qk_)
+print(n_iters)
