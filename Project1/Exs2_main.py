@@ -15,7 +15,7 @@ from Exs2_fun import *
 from scipy.linalg import expm
 #%%
 ######################
-##### EXERCISE 7 #####
+##### Task 7 #####
 ######################
 
 Q = np.array([[-0.0085, 0.005, 0.0025, 0, 0.001],
@@ -62,8 +62,8 @@ for i in range(len(t_an)):
 
 plt.plot(t_an,CDF_an, label="CDF Analytical")
 plt.xlim((0,t_an[-1]))
-plt.xlabel("Proportion of women dead")
-plt.ylabel("Month")
+plt.xlabel("Month")
+plt.ylabel("Proportion of women dead")
 plt.legend()
 
 plt.savefig("CDFcomparison_ex7.svg", format="svg")
@@ -73,7 +73,7 @@ S_emp_1 = (n_women-CDF_emp)/n_women
 
 #%%
 ######################
-##### EXERCISE 8 #####
+##### Task 8 #####
 ######################
 
 ## Kolmogorov test
@@ -81,7 +81,7 @@ ks = stats.kstest(CDF_emp,CDF_an)
 
 #%%
 ######################
-##### EXERCISE 9 #####
+##### Task 9 #####
 ######################
 
 Q = np.array([[-0.00475, 0.0025, 0.00125, 0, 0.001],

@@ -13,7 +13,7 @@ from random import sample
 from Exs1_fun import *
 #%%
 ######################
-##### EXERCISE 1 #####
+##### Task 1 #####
 ######################
 
 P = np.array([[0.9915,0.005,0.0025,0,0.001],[0,0.986,0.005,0.004,0.005],\
@@ -89,7 +89,7 @@ plt.savefig("monthofdead_dist_analytical.svg", format="svg")
 
 #%%
 ######################
-##### EXERCISE 2 #####
+##### Task 2 #####
 ######################
 
 plt.figure()
@@ -125,7 +125,7 @@ plt.savefig("WomantobedeadCDF_exact.svg", format="svg")
 
 #%%
 ######################
-##### EXERCISE 4 #####
+##### Task 4 #####
 ######################
 
 women_states, women_months = simulate_death_1(P,n_women=20000)
@@ -164,7 +164,7 @@ plt.savefig("monthofdead_dist_empirical_rejection.svg", format="svg")
 
 #%%
 ######################
-##### EXERCISE 5 #####
+##### Task 5 #####
 ######################
 n_women = 200
 limit_months = 350

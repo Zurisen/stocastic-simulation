@@ -75,7 +75,16 @@ doctor_visit = 48
 N, S = simulate_death_3_task13(Q, n_women, doctor_visit=48, limit_months=48*12)
 Q0 = update_Q(N, S)
 
-Qk_, n_iters = converge_Q(Q0, n_women, doctor_visit=48, limit_months=1200)
+Qk_, n_iters = converge_Q(Q0, n_women, doctor_visit=48, limit_months=48*12)
 
 print(Qk_)
-print(n_iters)
+
+Qk_.tofile('Qk.csv',sep=' & ',format='%0.6f')
+
+## Check results
+doctor_register, last_states, women_months = simulate_death_3(Qk_, n_women, doctor_visit=doctor_visit, limit_months=48*12)
+print("Dead women: %d" %np.sum(last_states==4))
+print("Local+metastasis women: %d" %np.sum(last_states==3))
+print("Metastasis women: %d" %np.sum(last_states==2))
+print("Local women: %d" %np.sum(last_states==1))
+print("Healthy women: %d" %np.sum(last_states==0))
