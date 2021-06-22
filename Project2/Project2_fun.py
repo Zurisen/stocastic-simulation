@@ -22,7 +22,7 @@ def ward_sample(size, scale, distr_type):
     return out
         
 
-def beds_simulation(realoc_probs, params, urgency_weight = False, ward_distribution = "exp", n_patients=5000):
+def beds_simulation(realoc_probs, params, ward_distribution = "exp", n_patients=5000):
     if realoc_probs.shape[0] != params.shape[0]:
         raise SyntaxError("Dimensions of parameters and realocation probabilites do not match!")        
         
@@ -69,11 +69,11 @@ def beds_simulation(realoc_probs, params, urgency_weight = False, ward_distribut
         n_patient_type = int(arrival_types[n]) ## keep track of the patient type in this iteration
         just_freed_beds = np.where(ward_times<arrival_times[n])[0] ## Check beds that has just been freed
 
-        if just_freed_beds.shape[0] != 0:
+        if just_freed_beds.shape[0] != 0: ## Check if just_freed_beds is not null
             beds_occupied[just_freed_beds] -= 1 ## Remove patient from the ward
             beds_occupied[beds_occupied<0] = 0 ## To avoid negative occupation values
             
-        if (beds_occupied[n_patient_type] < bed_capacities[n_patient_type]):
+        if (beds_occupied[n_patient_type] < bed_capacities[n_patient_type]): ## Check if the correct ward for the patient has available beds
             accepted[n_patient_type] += 1
             beds_occupied[n_patient_type] += 1
             ward_times[n_patient_type] = ward_time_dist[n_patient_type,n] + arrival_times[n]
@@ -84,17 +84,12 @@ def beds_simulation(realoc_probs, params, urgency_weight = False, ward_distribut
             wards_available = np.where(beds_occupied<bed_capacities)[0]
             probs = realoc_probs[n_patient_type,wards_available]
             
-            if np.sum(probs) == 0:
+            if np.sum(probs) == 0: ## In the case with F ward it is impossible to move patients from other wards to F (but not viceversa)
                 rejected[n_patient_type] += 1
             else:
                 probs_normalized = probs/np.sum(probs) ## Normalize the probabilities to sample from them
-                if urgency_weight:
-                    probs_normalized[:] = 0
-                    min_urgency = np.where(urgency_pts[wards_available] == np.min(urgency_pts[wards_available]))[0]
-                    probs_normalized[min_urgency] = 1
-                    probs_normalized = probs_normalized/np.sum(probs_normalized)
-                
                 select_ward = choice(wards_available, p=probs_normalized) ## Choose one of the other available wards
+      
                 beds_occupied[select_ward] += 1
                 ward_times[select_ward] = ward_time_dist[n_patient_type,n] + arrival_times[n]
             
