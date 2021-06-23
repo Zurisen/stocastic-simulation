@@ -36,14 +36,19 @@ def beds_simulation(realoc_probs, params, ward_distribution = "exp", n_patients=
     arrival_time_dist = np.zeros(n_patients)
     arrival_types = np.zeros(n_patients) ## To store the type of the patient and assign it to a ward
     patient_types_count = np.zeros(n_types) ## store total number of patients in each category
+    
+    arrival_times_sampler = np.zeros((n_types, n_patients))
+    for i in range(n_types):
+        arrival_times_sampler[i] = exponential(size=[n_patients], scale=1/arrival_rates[i])
+    
     for i in range(n_patients):
-        patient_type = randint(0,n_types)
+        patient_type = np.where( arrival_times_sampler[:,i] == np.min(arrival_times_sampler[:,i]) )[0]
         patient_types_count[patient_type] +=1
         
-        arrival_time_dist[i] = exponential(size=1, scale=1/arrival_rates[patient_type])
+        arrival_time_dist[i] = np.min(arrival_times_sampler[:,i])
         arrival_types[i] = patient_type
     arrival_times = np.cumsum(arrival_time_dist)
-    
+
     ## Build ward service times
     ward_time_dist = np.zeros((n_types, n_patients))
     for i in range(n_types):
@@ -52,8 +57,6 @@ def beds_simulation(realoc_probs, params, ward_distribution = "exp", n_patients=
     
     ## Start counter of beds occupation for each ward
     beds_occupied = np.zeros(n_types)
-    ## Start time of occupation for each ward
-    ward_times = np.zeros(n_types)
     
     ## Start counter for rejected patients
     rejected = np.zeros(n_types)
@@ -62,21 +65,31 @@ def beds_simulation(realoc_probs, params, ward_distribution = "exp", n_patients=
     ## Start counter for patients alocated in their correct ward
     accepted = np.zeros(n_types)
     
-    ## Count total penalty (we try to minimize)
+    ## Count total penalty 
     penalty = 0
     
-    for n in range(n_patients):
+    patients_in_bed_times = np.array([0])
+    patients_in_bed_type = np.array([0])
+    
+    for n in range(n_patients):   
+        
         n_patient_type = int(arrival_types[n]) ## keep track of the patient type in this iteration
-        just_freed_beds = np.where(ward_times<arrival_times[n])[0] ## Check beds that has just been freed
-
-        if just_freed_beds.shape[0] != 0: ## Check if just_freed_beds is not null
-            beds_occupied[just_freed_beds] -= 1 ## Remove patient from the ward
-            beds_occupied[beds_occupied<0] = 0 ## To avoid negative occupation values
-            
+        # just_freed_beds = np.where(ward_times<arrival_times[n])[0] ## Check beds that has just been freed   
+        
+        cured_patients = np.where(patients_in_bed_times < arrival_times[n])[0]
+        
+        patients_in_bed_times = np.delete(patients_in_bed_times, cured_patients)                   
+        patients_in_bed_type = np.delete(patients_in_bed_type, cured_patients) 
+        
+        for i in range(n_types):
+            beds_occupied[i] = np.sum(patients_in_bed_type == i) 
+        
         if (beds_occupied[n_patient_type] < bed_capacities[n_patient_type]): ## Check if the correct ward for the patient has available beds
             accepted[n_patient_type] += 1
-            beds_occupied[n_patient_type] += 1
-            ward_times[n_patient_type] = ward_time_dist[n_patient_type,n] + arrival_times[n]
+            
+            ward_time = ward_time_dist[n_patient_type,n] + arrival_times[n]
+            patients_in_bed_times = np.append(patients_in_bed_times, ward_time)
+            patients_in_bed_type = np.append(patients_in_bed_type, n_patient_type)
             
         elif np.sum(beds_occupied<bed_capacities)>0: ## Check if there is any other ward with beds available
             relocated[n_patient_type] += 1
@@ -85,13 +98,15 @@ def beds_simulation(realoc_probs, params, ward_distribution = "exp", n_patients=
             probs = realoc_probs[n_patient_type,wards_available]
             
             if np.sum(probs) == 0: ## In the case with F ward it is impossible to move patients from other wards to F (but not viceversa)
+                relocated[n_patient_type] -= 1
                 rejected[n_patient_type] += 1
             else:
                 probs_normalized = probs/np.sum(probs) ## Normalize the probabilities to sample from them
                 select_ward = choice(wards_available, p=probs_normalized) ## Choose one of the other available wards
       
-                beds_occupied[select_ward] += 1
-                ward_times[select_ward] = ward_time_dist[n_patient_type,n] + arrival_times[n]
+                ward_time = ward_time_dist[n_patient_type,n] + arrival_times[n]
+                patients_in_bed_times = np.append(patients_in_bed_times, ward_time)
+                patients_in_bed_type = np.append(patients_in_bed_type, select_ward)
             
         else: ## No beds available
             rejected[n_patient_type] += 1
