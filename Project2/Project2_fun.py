@@ -12,17 +12,17 @@ from time import time
 from numpy.random import *
 
 
-def ward_sample(size, scale, distr_type):
+def ward_sample(size, scale, distr_type, sigma):
     if distr_type == "exp":
         out = exponential(size=size, scale = scale)
     elif distr_type == "lognormal":
-        out = lognormal(sigma=4*scale**2, size=size)
+        out = lognormal(sigma=sigma*scale**2, size=size)
     else:
         raise NotImplementedError("Not implemented distribution type: choose exp or lognormal")
     return out
         
 
-def beds_simulation(realoc_probs, params, ward_distribution = "exp", n_patients=5000):
+def beds_simulation(realoc_probs, params, ward_distribution = "exp", n_patients=5000, sigma=2):
     if realoc_probs.shape[0] != params.shape[0]:
         raise SyntaxError("Dimensions of parameters and realocation probabilites do not match!")        
         
@@ -37,10 +37,12 @@ def beds_simulation(realoc_probs, params, ward_distribution = "exp", n_patients=
     arrival_types = np.zeros(n_patients) ## To store the type of the patient and assign it to a ward
     patient_types_count = np.zeros(n_types) ## store total number of patients in each category
     
+    
+    ## Sample times from each distribution type for arrival times
     arrival_times_sampler = np.zeros((n_types, n_patients))
     for i in range(n_types):
         arrival_times_sampler[i] = exponential(size=[n_patients], scale=1/arrival_rates[i])
-    
+    # Fill arrival_times vector with the arrivals of the patients until "n_patients" max
     for i in range(n_patients):
         patient_type = np.where( arrival_times_sampler[:,i] == np.min(arrival_times_sampler[:,i]) )[0]
         patient_types_count[patient_type] +=1
@@ -53,7 +55,7 @@ def beds_simulation(realoc_probs, params, ward_distribution = "exp", n_patients=
     ward_time_dist = np.zeros((n_types, n_patients))
     for i in range(n_types):
         #ward_time_dist[i] = exponential(size=[n_patients], scale = ward_rates[i])
-        ward_time_dist[i] = ward_sample(distr_type=ward_distribution, size=n_patients, scale=ward_rates[i])
+        ward_time_dist[i] = ward_sample(distr_type=ward_distribution, size=n_patients, scale=ward_rates[i], sigma=sigma)
     
     ## Start counter of beds occupation for each ward
     beds_occupied = np.zeros(n_types)
@@ -74,7 +76,6 @@ def beds_simulation(realoc_probs, params, ward_distribution = "exp", n_patients=
     for n in range(n_patients):   
         
         n_patient_type = int(arrival_types[n]) ## keep track of the patient type in this iteration
-        # just_freed_beds = np.where(ward_times<arrival_times[n])[0] ## Check beds that has just been freed   
         
         cured_patients = np.where(patients_in_bed_times < arrival_times[n])[0]
         
