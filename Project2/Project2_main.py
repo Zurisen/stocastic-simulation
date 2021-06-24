@@ -19,7 +19,7 @@ realocation_probs = np.array([[0,0.05,0.1,0.05,0.8], [0.2,0,0.5,0.15,0.15], [0.3
 parameters = np.array([[55,14.5,2.9,7],[40,11.0,4.0,5],[30,8.0,4.5,2],[20,6.5,1.4,10],[20,5.0,3.9,5]])
 
 total_iters = 10
-n_patients = 10000
+n_patients = 16500
 ward_distribution = "exp" ## "exp" or "lognormal"
 
 accepted_array = np.zeros((total_iters, parameters.shape[0]))
@@ -70,7 +70,7 @@ parameters = np.array([[50,14.5,2.9,7],[25,11.0,4.0,5],[20,8.0,4.5,2],[20,6.5,1.
 
 
 total_iters = 10
-n_patients = 10000
+n_patients = 16500
 ward_distribution = "exp" ## "exp" or "lognormal"
 
 accepted_array = np.zeros((total_iters, parameters.shape[0]))
@@ -158,7 +158,7 @@ parameters = np.array([[50,14.5,2.9,7],[25,11.0,4.0,5],[20,8.0,4.5,2],[20,6.5,1.
 
 trial_sigmas = np.linspace(1,10,20)
 total_iters = len(trial_sigmas)
-n_patients = 10000
+n_patients = 16500
 ward_distribution = "lognormal" ## "exp" or "lognormal"
 
 accepted_array = np.zeros((total_iters, parameters.shape[0]))
@@ -225,7 +225,7 @@ realocation_probs = np.array([[0,0.05,0.1,0.05,0.8, 0], [0.2,0,0.5,0.15,0.15,0],
 parameters = np.array([[50,14.5,2.9,7],[25,11.0,4.0,5],[20,8.0,4.5,2],[20,6.5,1.4,10],[15,5.0,3.9,5], [35, 13.0, 2.2, 0]])
 new_parameters = np.array([[50,14.5,2.9,7],[25,11.0,4.0,5],[20,8.0,4.5,2],[20,6.5,1.4,10],[15,5.0,3.9,5], [35, 13.0, 2.2, 0]])
 
-n_patients = 10000
+n_patients = 16500
 ward_distribution = "exp" ## "exp" or "lognormal"
 add_beds = np.arange(-5,10,1)
 total_iters = len(add_beds)
@@ -301,7 +301,7 @@ parameters = np.array([[55,14.5,2.9,7],[5,11.0,4.0,5],[10,8.0,4.5,2],[60,6.5,1.4
 
 
 total_iters = 10
-n_patients = 10000
+n_patients = 16500
 ward_distribution = "exp" ## "exp" or "lognormal"
 
 accepted_array = np.zeros((total_iters, parameters.shape[0]))
@@ -371,7 +371,7 @@ parameters = np.array([[5,14.5,2.9,7],[40,11.0,4.0,5],[40,8.0,4.5,2],[5,6.5,1.4,
 
 
 total_iters = 10
-n_patients = 10000
+n_patients = 16500
 ward_distribution = "exp" ## "exp" or "lognormal"
 
 accepted_array = np.zeros((total_iters, parameters.shape[0]))

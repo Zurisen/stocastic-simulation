@@ -47,7 +47,7 @@ def beds_simulation(realoc_probs, params, ward_distribution = "exp", n_patients=
         patient_type = np.where( arrival_times_sampler[:,i] == np.min(arrival_times_sampler[:,i]) )[0]
         patient_types_count[patient_type] +=1
         
-        arrival_time_dist[i] = np.min(arrival_times_sampler[:,i])
+        arrival_time_dist[i] = np.min(arrival_times_sampler[:,i]) ## Pick the min arrival time between the possible arrival distributions
         arrival_types[i] = patient_type
     arrival_times = np.cumsum(arrival_time_dist)
 
