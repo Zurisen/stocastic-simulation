@@ -37,19 +37,18 @@ def beds_simulation(realoc_probs, params, ward_distribution = "exp", n_patients=
     arrival_types = np.zeros(n_patients) ## To store the type of the patient and assign it to a ward
     patient_types_count = np.zeros(n_types) ## store total number of patients in each category
     
-    
-    ## Sample times from each distribution type for arrival times
-    arrival_times_sampler = np.zeros((n_types, n_patients))
-    for i in range(n_types):
-        arrival_times_sampler[i] = exponential(size=[n_patients], scale=1/arrival_rates[i])
     # Fill arrival_times vector with the arrivals of the patients until "n_patients" max
     for i in range(n_patients):
-        patient_type = np.where( arrival_times_sampler[:,i] == np.min(arrival_times_sampler[:,i]) )[0]
+        arrival_times_sampler = np.zeros(n_types)
+        for j in range(n_types):
+            arrival_times_sampler[j] = exponential(size=1, scale=1/arrival_rates[j])
+    
+        patient_type = np.where( arrival_times_sampler == np.min(arrival_times_sampler) )[0]
         patient_types_count[patient_type] +=1
         
-        arrival_time_dist[i] = np.min(arrival_times_sampler[:,i]) ## Pick the min arrival time between the possible arrival distributions
+        arrival_time_dist[i] = np.min(arrival_times_sampler) ## Pick the min arrival time between the possible arrival distributions
         arrival_types[i] = patient_type
-    arrival_times = np.cumsum(arrival_time_dist)
+    arrival_times = np.cumsum(arrival_time_dist)  
 
     ## Build ward service times
     ward_time_dist = np.zeros((n_types, n_patients))

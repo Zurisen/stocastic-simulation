@@ -20,6 +20,7 @@ parameters = np.array([[55,14.5,2.9,7],[40,11.0,4.0,5],[30,8.0,4.5,2],[20,6.5,1.
 
 total_iters = 10
 n_patients = 16500
+
 ward_distribution = "exp" ## "exp" or "lognormal"
 
 accepted_array = np.zeros((total_iters, parameters.shape[0]))
@@ -56,7 +57,7 @@ results_without[:,2] = mean_relocated_without
 results_without[:,3] = mean_rejected_without 
 results_without[:,4] = mean_penalty_without
 
-np.savetxt('withoutFward_results.csv', results_without, delimiter=',')
+#np.savetxt('withoutFward_results.csv', results_without, delimiter=',')
 
 print(mean_penalty_without)
 
